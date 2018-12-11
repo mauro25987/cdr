@@ -36,7 +36,19 @@ def make_cdr(source, campaigns, date_from, date_to):
         )
     
     with connection.cursor() as cursor:
-        sql = "SELECT `user`, `host` FROM `user`"
+        sql = """
+            SELECT vlog.uniqueid as ID,
+            vlog.campaign_id as Campaign,
+            vlog.call_date as Date,
+            vlog.user as Agent,
+            CONCAT(vlog.phone_code ,vlog.phone_number) as Phone,
+            vlog.length_in_sec as Length_Sec,
+            CEILING(vlog.length_in_sec/60) as Length_Min,
+            clog.channel as Channel
+            FROM vicidial_log vlog
+            LEFT JOIN call_log clog ON clog.uniqueid=vlog.uniqueid
+            WHERE vlog.call_date >= '{date_from}' AND vlog.call_date < '{date_to}' AND ({in_campaigns});
+            """
         cursor.execute(sql)
         cdrdb = cursor.fetchall()
         print(result)
