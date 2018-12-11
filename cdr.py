@@ -47,7 +47,7 @@ def make_cdr(source, campaigns, date_from, date_to):
             clog.channel as Channel
             FROM vicidial_log vlog
             LEFT JOIN call_log clog ON clog.uniqueid=vlog.uniqueid
-            WHERE vlog.call_date >= '{date_from}' AND vlog.call_date < '{date_to}' AND ({in_campaigns});
+            WHERE vlog.call_date >= '{date_from}' AND vlog.call_date < '{date_to}' AND ({campaigns});
             """
         cursor.execute(sql)
         cdrdb = cursor.fetchall()
